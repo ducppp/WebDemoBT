@@ -1,0 +1,28 @@
+﻿@model DatabaseFirstDemo.Models.Role
+
+@{
+	ViewData["Title"] = "Details";
+	Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+
+<div class="row">
+	<div class="col-md-12">
+		<section class="panel">
+			<header class="panel-heading">
+				Chi tiết
+			</header>
+			<dl class="row">
+				<dt class="col-sm-2">
+					@Html.DisplayNameFor(model => model.Name)
+				</dt>
+				<dd class="col-sm-10">
+					@Html.DisplayFor(model => model.Name)
+				</dd>
+			</dl>
+			<div>
+				<a asp-action="Chỉnh sửa" asp-route-id="@Model?.Id" class="btn btn-success">Edit</a> |
+				<a asp-action="Index" class="btn btn-success">Trở về</a>
+			</div>
+		</section>
+	</div>
+</div>
