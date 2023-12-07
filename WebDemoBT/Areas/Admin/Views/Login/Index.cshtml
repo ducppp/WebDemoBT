@@ -34,12 +34,12 @@
                             </div>
                         }
                     }
-                    @if (!ViewData.ModelState.IsValid)
+                   @*  @if (!ViewData.ModelState.IsValid)
                     {
                         <div asp-validation-for="Error" id="alertBox" class="alert alert-danger">
                             @ViewData.ModelState.FirstOrDefault(x=>x.Key == "Error").Value.Errors.First().ErrorMessage
                         </div>
-                    }
+                    } *@
                     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                     <div class="form-group">
                         <label asp-for="UserName" class="control-label"></label>
