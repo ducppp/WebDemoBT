@@ -8,11 +8,12 @@ using Microsoft.EntityFrameworkCore;
 using DatabaseFirstDemo.Models;
 using DatabaseFirstDemo.Repository;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
+using System.Data;
 
 namespace WebDemoBT.Areas.Admin.Controllers
 {
 	[Area("Admin")]
-	public class RolesController : Controller
+	public class RolesController : BaseController
 	{
 		private readonly ProductMagementDemoContext _context;
 
@@ -73,13 +74,13 @@ namespace WebDemoBT.Areas.Admin.Controllers
 				if (ModelState.IsValid)
 				{
 					rolesRepository.Insert(role);
-					TempData["Message"] = "Insert data is success!";
+					SetAlert("Insert Data is success!", "success"); ;
 					//_context.Add(role);
 					//await _context.SaveChangesAsync();
 					return RedirectToAction(nameof(Index));
 				}
 			}
-			catch(Exception ex)
+			catch (Exception ex)
 			{
 				ModelState.AddModelError("Error", ex.Message);
 			}
@@ -88,18 +89,19 @@ namespace WebDemoBT.Areas.Admin.Controllers
 		}
 
 		// GET: Admin/Roles/Edit/5
-		public async Task<IActionResult> Edit(int? id)
+		public async Task<IActionResult> Edit(int id)
 		{
-			if (id == null || _context.Roles == null)
+			Role role = rolesRepository.GetById(id);
+			if (id == null || role == null)
 			{
 				return NotFound();
 			}
 
-			var role = await _context.Roles.FindAsync(id);
-			if (role == null)
-			{
-				return NotFound();
-			}
+			//var role = await _context.Roles.FindAsync(id);
+			//if (role == null)
+			//{
+			//	return NotFound();
+			//}
 			return View(role);
 		}
 
@@ -110,49 +112,55 @@ namespace WebDemoBT.Areas.Admin.Controllers
 		[ValidateAntiForgeryToken]
 		public async Task<IActionResult> Edit(int id, [Bind("Id,Name")] Role role)
 		{
-			if (id != role.Id)
+			try
 			{
-				return NotFound();
-			}
+				if (id != role.Id)
+				{
+					return NotFound();
+				}
 
-			if (ModelState.IsValid)
+				if (ModelState.IsValid)
+				{
+					try
+					{
+						rolesRepository.Update(role);
+						SetAlert("Update data is success!", "success");
+					}
+					catch (DbUpdateConcurrencyException)
+					{
+						if (!RoleExists(role.Id))
+						{
+							return NotFound();
+						}
+						else
+						{
+							throw;
+						}
+					}
+					return RedirectToAction(nameof(Index));
+				}
+			}
+			catch (Exception ex)
 			{
-				try
-				{
-					_context.Update(role);
-					await _context.SaveChangesAsync();
-				}
-				catch (DbUpdateConcurrencyException)
-				{
-					if (!RoleExists(role.Id))
-					{
-						return NotFound();
-					}
-					else
-					{
-						throw;
-					}
-				}
-				return RedirectToAction(nameof(Index));
+				ModelState.AddModelError("Error", ex.Message);
 			}
 			return View(role);
 		}
 
 		// GET: Admin/Roles/Delete/5
-		public async Task<IActionResult> Delete(int? id)
+		public async Task<IActionResult> Delete(int id)
 		{
-			if (id == null || _context.Roles == null)
+			Role role = rolesRepository.GetById(id);
+			if (id == null || role == null)
 			{
 				return NotFound();
 			}
 
-			var role = await _context.Roles
-				.FirstOrDefaultAsync(m => m.Id == id);
-			if (role == null)
-			{
-				return NotFound();
-			}
-
+			//var role = await _context.Roles.FindAsync(id);
+			//if (role == null)
+			//{
+			//	return NotFound();
+			//}
 			return View(role);
 		}
 
@@ -161,17 +169,21 @@ namespace WebDemoBT.Areas.Admin.Controllers
 		[ValidateAntiForgeryToken]
 		public async Task<IActionResult> DeleteConfirmed(int id)
 		{
-			if (_context.Roles == null)
+			try
 			{
-				return Problem("Entity set 'ProductMagementDemoContext.Roles'  is null.");
-			}
-			var role = await _context.Roles.FindAsync(id);
-			if (role != null)
-			{
-				_context.Roles.Remove(role);
-			}
 
-			await _context.SaveChangesAsync();
+				var result = rolesRepository.GetById(id);
+				if (result == null)
+				{
+					return Problem("Entity set 'WebDemoBT.Roles'  is null.");
+				}
+				rolesRepository.Delete(result);
+				SetAlert("Delete data is succcess", "success");
+			}
+			catch (Exception ex)
+			{
+				ModelState.AddModelError("Error", ex.Message);
+			}
 			return RedirectToAction(nameof(Index));
 		}
 
