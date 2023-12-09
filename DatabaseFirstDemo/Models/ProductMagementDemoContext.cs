@@ -41,7 +41,7 @@ public partial class ProductMagementDemoContext : DbContext
     {
         modelBuilder.Entity<News>(entity =>
         {
-            entity.Property(e => e.Id).ValueGeneratedNever();
+/*            entity.Property(e => e.Id).ValueGeneratedNever();*/
             entity.Property(e => e.Avatar)
                 .HasMaxLength(200)
                 .IsUnicode(false)
@@ -65,8 +65,8 @@ public partial class ProductMagementDemoContext : DbContext
         modelBuilder.Entity<NewsCategory>(entity =>
         {
             entity.ToTable("NewsCategory");
-
-            entity.Property(e => e.Id).ValueGeneratedNever();
+/*
+            entity.Property(e => e.Id).ValueGeneratedNever();*/
             entity.Property(e => e.CategoryName).HasMaxLength(50);
         });
 
@@ -183,5 +183,10 @@ public partial class ProductMagementDemoContext : DbContext
         OnModelCreatingPartial(modelBuilder);
     }
 
-    partial void OnModelCreatingPartial(ModelBuilder modelBuilder);
+/*	internal object Entry<T>(Role newsCategory)
+	{
+		throw new NotImplementedException();
+	}
+*/
+	partial void OnModelCreatingPartial(ModelBuilder modelBuilder);
 }
